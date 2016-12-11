@@ -1,0 +1,3 @@
+chain_command_homepage:
+    path:     /
+    defaults: { _controller: ChainCommandBundle:Default:index }

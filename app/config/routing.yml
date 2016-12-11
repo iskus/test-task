@@ -1,0 +1,15 @@
+bar:
+    resource: "@BarBundle/Resources/config/routing.yml"
+    prefix:   /
+
+foo:
+    resource: "@FooBundle/Resources/config/routing.yml"
+    prefix:   /
+
+chain_command:
+    resource: "@ChainCommandBundle/Resources/config/routing.yml"
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation

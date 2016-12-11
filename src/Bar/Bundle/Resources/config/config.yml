@@ -1,0 +1,2 @@
+chain_command:
+    'foo:hello': ['bar:hi']
