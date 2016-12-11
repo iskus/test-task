@@ -1,23 +1,22 @@
 <?php
 
-namespace Bar\Bundle\Command;
+namespace Test\Bundle\Command;
 
 use Chain\CommandBundle\Command\ChainCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BarHiCommand extends ChainCommand
+class TestYoCommand extends ChainCommand
 {
 	protected function configure() {
 		$this
-			->setName('bar:hi')
-			->setDescription('Testing command');
+			->setName('test:yo')
+			->setDescription('...');
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		parent::execute($input, $output);
-		$output->writeln('Hi from Bar!');
+		$output->writeln('Yo from Test');
 	}
-	
 	
 }

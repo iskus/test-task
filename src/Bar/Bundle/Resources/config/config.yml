@@ -1,2 +1,2 @@
 chain_command:
-    'foo:hello': ['bar:hi']
+    'foo:hello': ['bar:hi', 'test:yo']

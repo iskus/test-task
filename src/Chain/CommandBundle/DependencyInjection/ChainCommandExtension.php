@@ -17,8 +17,7 @@ class ChainCommandExtension extends Extension
 	 *
 	 * @throws \InvalidArgumentException When provided tag is not defined in this extension
 	 */
-	public function load(array $configs, ContainerBuilder $container)
-	{
+	public function load(array $configs, ContainerBuilder $container) {
 		$container->setParameter('chain_command.chains', $this->loadChainCommandsConfig($configs));
 		$this->loadServices($container);
 	}
@@ -27,17 +26,16 @@ class ChainCommandExtension extends Extension
 	 * @param array $configs
 	 * @return array
 	 */
-	private function loadChainCommandsConfig(array $configs)
-	{
+	private function loadChainCommandsConfig(array $configs) {
 		$configuration = new Configuration();
+		
 		return $this->processConfiguration($configuration, $configs);
 	}
 	
 	/**
 	 * @param ContainerBuilder $container
 	 */
-	private function loadServices(ContainerBuilder $container)
-	{
+	private function loadServices(ContainerBuilder $container) {
 		$loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 		$loader->load('services.yml');
 	}
