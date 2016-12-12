@@ -9,9 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FooHelloCommand extends ChainCommand
 {
 	protected function configure() {
-		$this
-			->setName('foo:hello')
-			->setDescription('Testing command');
+		$this->setName('foo:hello')->setDescription('...');
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {

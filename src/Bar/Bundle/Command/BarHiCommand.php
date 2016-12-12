@@ -9,9 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BarHiCommand extends ChainCommand
 {
 	protected function configure() {
-		$this
-			->setName('bar:hi')
-			->setDescription('Testing command');
+		$this->setName('bar:hi')->setDescription('...');
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {

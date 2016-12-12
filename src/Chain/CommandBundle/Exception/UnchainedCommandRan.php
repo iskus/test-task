@@ -2,6 +2,6 @@
 
 namespace Chain\CommandBundle\Exception;
 
-class UnchainedCommandRan extends \Exception
+class UnchainedRun extends \Exception
 {
 }

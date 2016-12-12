@@ -2,7 +2,7 @@
 
 namespace Chain\CommandBundle\Command;
 
-use Chain\CommandBundle\Exception\UnchainedCommandRan;
+use Chain\CommandBundle\Exception\UnchainedRun;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -13,86 +13,38 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class ChainCommand extends ContainerAwareCommand
 {
-	const CHAINED_ARGUMENT = 'chained';
+	const COMMAND_ARGUMENT = 'chained';
 	
 	/** @var  LoggerInterface */
 	private $logger;
 	
 	final public function run(InputInterface $input, OutputInterface $output) {
 		try {
-			$chainCommands = $this->getChainCommands();
 			
-			if ($chainCommands) {
-				$this->logChainInfo($chainCommands);
+			if ($chainCommands = $this->getChainCommands()) {
+				$this->log($chainCommands);
 			}
 			
-			$bufferedOutput = new BufferedOutput();
-			$returnCode     = parent::run($input, $bufferedOutput);
-			$outputString   = $bufferedOutput->fetch();
-			$this->getLogger()->info($outputString);
+			$returnCode = parent::run($input, $buffered = new BufferedOutput());
+			
+			$this->getLogger()->info($outputString = $buffered->fetch());
 			$output->write($outputString);
 			
 			if ($chainCommands) {
 				$this->getApplication()->setAutoExit(false);
-				$this->getLogger()->info(sprintf('Executing %s chain members:', $this->getName()));
+				$this->getLogger()->info("Executing {$this->getName()} chain members:");
+				
 				foreach ($chainCommands as $chainCommand) {
-					$chainCommand->addArgument(self::CHAINED_ARGUMENT, InputArgument::REQUIRED);
-					$this->runChainCommand($chainCommand, $output);
+					$chainCommand->addArgument(self::COMMAND_ARGUMENT, InputArgument::REQUIRED);
+					$this->execCommand($chainCommand, $output);
 				}
-				$this->getLogger()->info(sprintf('Execution of %s chain completed.', $this->getName()));
+				$this->getLogger()->info("Execution of {$this->getName()} chain completed.");
 			}
 			
 			return $returnCode;
-		} catch (UnchainedCommandRan $ex) {
+		} catch (UnchainedRun $ex) {
 			return -1;
 		}
-	}
-	
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 * @throws UnchainedCommandRan When command is registered as chain, but ran separately
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
-		$parent = $this->getParent();
-		if ($parent && !$input->hasArgument(self::CHAINED_ARGUMENT)) {
-			$errorMessage = $this->prepareParentChainErrorMessage($parent);
-			$this->getLogger()->error($errorMessage);
-			throw new UnchainedCommandRan();
-		}
-		
-		return 0;
-	}
-	
-	/**
-	 * @return ChainCommand|null
-	 */
-	private function getParent() {
-		if ($parentChainCommandName = $this->getParentChainCommandName()) {
-			return $this->findChainCommandByName($parentChainCommandName);
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * @return string|null
-	 */
-	private function getParentChainCommandName() {
-		return $this->getContainer()->get('chain_command.manager')->getParentChainCommandName($this);
-	}
-	
-	/**
-	 * @param ChainCommand $parentChainCommand
-	 * @return string
-	 */
-	private function prepareParentChainErrorMessage(ChainCommand $parentChainCommand) {
-		return sprintf(
-			'<error>Error: "%s" command is a member of "%s" command chain and cannot be executed on its own.</error>',
-			$this->getName(),
-			$parentChainCommand->getName()
-		);
 	}
 	
 	/**
@@ -100,8 +52,8 @@ abstract class ChainCommand extends ContainerAwareCommand
 	 */
 	public function getChainCommands() {
 		$chainCommands = [];
-		foreach ($this->getChainCommandNames() as $chainCommandName) {
-			$chainCommand = $this->findChainCommandByName($chainCommandName);
+		foreach ($this->getNames() as $chainCommandName) {
+			$chainCommand = $this->getByName($chainCommandName);
 			if ($chainCommand) {
 				$chainCommands[] = $chainCommand;
 			}
@@ -113,15 +65,15 @@ abstract class ChainCommand extends ContainerAwareCommand
 	/**
 	 * @return string[]
 	 */
-	private function getChainCommandNames() {
-		return $this->getContainer()->get('chain_command.manager')->getChainCommandNames($this);
+	private function getNames() {
+		return $this->getContainer()->get('chain_command.helper')->getNames($this);
 	}
 	
 	/**
 	 * @param $name
 	 * @return ChainCommand|null
 	 */
-	private function findChainCommandByName($name) {
+	private function getByName($name) {
 		foreach ($this->getApplication()->all() as $command) {
 			if ($command->getName() === $name && $command instanceof ChainCommand) {
 				return $command;
@@ -132,21 +84,17 @@ abstract class ChainCommand extends ContainerAwareCommand
 	}
 	
 	/**
-	 * @param ChainCommand $command
-	 * @param OutputInterface $output
-	 * @return int
-	 * @throws \Exception
+	 * @param ChainCommand[] $chainCommands
 	 */
-	private function runChainCommand(ChainCommand $command, OutputInterface $output) {
-		return $this->getApplication()->run(
-			new ArrayInput(
-				[
-					'command' => $command->getName(),
-					self::CHAINED_ARGUMENT => true,
-				]
-			),
-			$output
-		);
+	private function log(array $chainCommands) {
+		$this->getLogger()
+		     ->info("{$this->getName()} is a master command of a command chain that has registered member commands");
+		foreach ($chainCommands as $chainCommand) {
+			$this->getLogger()->info(
+				"{$chainCommand->getName()} registered as a member of {$this->getName()} command chain"
+			);
+		}
+		$this->getLogger()->info("Executing {$this->getName()} command itself first:");
 	}
 	
 	/**
@@ -157,17 +105,62 @@ abstract class ChainCommand extends ContainerAwareCommand
 	}
 	
 	/**
-	 * @param ChainCommand[] $chainCommands
+	 * @param ChainCommand $command
+	 * @param OutputInterface $output
+	 * @return int
+	 * @throws \Exception
 	 */
-	private function logChainInfo(array $chainCommands) {
-		$this->getLogger()->info(
-			"{$this->getName()} is a master command of a command chain that has registered member commands"
+	private function execCommand(ChainCommand $command, OutputInterface $output) {
+		return $this->getApplication()->run(
+			new ArrayInput(
+				[
+					'command' => $command->getName(),
+					self::COMMAND_ARGUMENT => true,
+				]
+			),
+			$output
 		);
-		foreach ($chainCommands as $chainCommand) {
-			$this->getLogger()->info(
-				"{$chainCommand->getName()} registered as a member of {$this->getName()} command chain"
-			);
+	}
+	
+	/**
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @return int
+	 * @throws UnchainedRun When command is registered as chain, but ran separately
+	 */
+	protected function execute(InputInterface $input, OutputInterface $output) {
+		if (($parent = $this->getParent()) && !$input->hasArgument(self::COMMAND_ARGUMENT)) {
+			$errorMessage = $this->createParentErrorMessage($parent);
+			$this->getLogger()->error($errorMessage);
+			throw new UnchainedRun();
 		}
-		$this->getLogger()->info("Executing {$this->getName()} command itself first:");
+		
+		return 0;
+	}
+	
+	/**
+	 * @return ChainCommand|null
+	 */
+	private function getParent() {
+			return $this->getByName($parentChainCommandName = $this->getParentName()) ? : null;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	private function getParentName() {
+		return $this->getContainer()->get('chain_command.helper')->getParentName($this);
+	}
+	
+	/**
+	 * @param ChainCommand $parent
+	 * @return string
+	 */
+	private function createParentErrorMessage(ChainCommand $parent) {
+		$message = "<error>Error: '{$this->getName()}' command is a member of '{$parent->getName()}'".
+			"command chain and cannot be executed on its own.</error>";
+		
+		return $message;
+		
 	}
 }
