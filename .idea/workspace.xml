@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="87fac093-3af0-4d36-9d35-1dff1f9760a6" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/Chain/CommandBundle/Manager/ChainCommandManager.php" afterPath="$PROJECT_DIR$/src/Chain/CommandBundle/Helper/ChainCommandHelper.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/Chain/CommandBundle/Tests/Manager/ChainCommandManagerTest.php" afterPath="$PROJECT_DIR$/src/Chain/CommandBundle/Tests/Helper/ChainCommandHelperTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.lock" afterPath="$PROJECT_DIR$/composer.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Controller/DefaultController.php" afterPath="$PROJECT_DIR$/src/AppBundle/Controller/DefaultController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Bar/Bundle/Command/BarHiCommand.php" afterPath="$PROJECT_DIR$/src/Bar/Bundle/Command/BarHiCommand.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Chain/CommandBundle/Command/ChainCommand.php" afterPath="$PROJECT_DIR$/src/Chain/CommandBundle/Command/ChainCommand.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Chain/CommandBundle/Exception/UnchainedCommandRan.php" afterPath="$PROJECT_DIR$/src/Chain/CommandBundle/Exception/UnchainedCommandRan.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Chain/CommandBundle/Resources/config/services.yml" afterPath="$PROJECT_DIR$/src/Chain/CommandBundle/Resources/config/services.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Chain/CommandBundle/Tests/DependencyInjection/ConfigurationTest.php" afterPath="$PROJECT_DIR$/src/Chain/CommandBundle/Tests/DependencyInjection/ConfigurationTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Foo/Bundle/Command/FooHelloCommand.php" afterPath="$PROJECT_DIR$/src/Foo/Bundle/Command/FooHelloCommand.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Test/Bundle/Controller/DefaultController.php" afterPath="$PROJECT_DIR$/src/Test/Bundle/Controller/DefaultController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Test/Bundle/DependencyInjection/Configuration.php" afterPath="$PROJECT_DIR$/src/Test/Bundle/DependencyInjection/Configuration.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Test/Bundle/DependencyInjection/TestExtension.php" afterPath="$PROJECT_DIR$/src/Test/Bundle/DependencyInjection/TestExtension.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Test/Bundle/Tests/Controller/DefaultControllerTest.php" afterPath="$PROJECT_DIR$/src/Test/Bundle/Tests/Controller/DefaultControllerTest.php" />
-    </list>
+    <list default="true" id="87fac093-3af0-4d36-9d35-1dff1f9760a6" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -921,12 +906,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1481454692914</updated>
-      <workItem from="1481454694701" duration="14432000" />
+      <workItem from="1481454694701" duration="14755000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14432000" />
+    <option name="totallyTimeSpent" value="14755000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1323" y="24" width="1323" height="744" extended-state="6" />
